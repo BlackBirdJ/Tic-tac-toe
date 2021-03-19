@@ -12,6 +12,7 @@ public class Field extends JFrame{
 
     private Column[][] columns = new Column[COUNT_COL][COUNT_COL];
     private int move = 1;
+    private String winner = "";
     private ModeButton mode;
     private RestartButton restart_button;
 
@@ -45,8 +46,9 @@ public class Field extends JFrame{
     }
 
     public void action(int row, int col) {
-        String winner = checkWin();
-        if (this.columns[row][col].isEmpty() && winner.isEmpty()) {
+        if (!winner.isEmpty())
+            return;
+        if (this.columns[row][col].isEmpty()) {
             if (move % 2 != 0) {
                 this.columns[row][col].setText(cross);
             }
@@ -56,15 +58,14 @@ public class Field extends JFrame{
             System.out.println("Player: " + this.columns[row][col].getText() + "\trow: " + row + "\tcol: " + col);
             move++;
         }
-        winner = checkWin();
+        checkWin();
         if (!winner.isEmpty()) {
             System.out.println("Победили: " + winner);
-            return;
         }
     }
 
-    public String checkWin() {
-        String winner = "";
+    public void checkWin() {
+        winner = "";
         Color colorWin = Color.green;
         try {
             //rows
@@ -103,7 +104,6 @@ public class Field extends JFrame{
             for (Column column: e.getLinkedList())
                 column.setBackground(colorWin);
         }
-        return winner;
     }
     //Проверяет одну линию, на победную комбинацию
     public void checkLine(int xStart, int yStart, int xStep, int yStep, int size) throws GotWinnerException {
@@ -139,6 +139,7 @@ public class Field extends JFrame{
             for (Column cell : arr)
                 cell.clear();
         move = 1;
+        winner = "";
         System.out.println("Начата новая партия");
     }
 }
