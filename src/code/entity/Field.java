@@ -5,7 +5,7 @@ import java.awt.*;
 import java.util.*;
 
 public class Field extends JFrame{
-    public final static int COUNT_COL = 7;
+    public final static int COUNT_COL = 10;
     public final static int COLUMNS_SIZE = COUNT_COL * Column.COL_SIZE;
     public final static String cross = "X";
     public final static String zero = "0";
@@ -76,13 +76,13 @@ public class Field extends JFrame{
                 checkLine(i, 0, 0, 1, COUNT_COL);
             //left diagonal top-half
             int leftSize = 3;
-            for (int i = 4; i > 0; i--) {
+            for (int i = COUNT_COL - 3; i >= 0; i--) {
                 checkLine(i, 0, 1, 1, leftSize);
                 leftSize++;
             }
             //left diagonal bot-half
             leftSize = 3;
-            for (int i = 4; i > 0; i--) {
+            for (int i = COUNT_COL - 3; i > 0; i--) {
                 checkLine( 0, i, 1, 1, leftSize);
                 leftSize++;
             }
@@ -94,7 +94,7 @@ public class Field extends JFrame{
             }
             //right diagonal bot-half
             rightSize = 3;
-            for (int i = 4; i > 0; i--) {
+            for (int i = COUNT_COL - 3; i > 0; i--) {
                 checkLine(COUNT_COL - 1, i, -1, 1, rightSize);
                 rightSize++;
             }
