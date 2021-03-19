@@ -12,8 +12,8 @@ public class Field extends JFrame{
 
     private Column[][] columns = new Column[COUNT_COL][COUNT_COL];
     private int move = 1;
-    private JCheckBox mode;
-    private JButton restart_button;
+    private ModeButton mode;
+    private RestartButton restart_button;
 
     public Field() {
         super("Крестики-нолики");
