@@ -9,6 +9,7 @@ public class Field extends JFrame{
     public final static int COLUMNS_SIZE = COUNT_COL * Column.COL_SIZE;
     public final static String cross = "X";
     public final static String zero = "0";
+    public final static int WINNER_LEN = 3;
 
     private Column[][] columns = new Column[COUNT_COL][COUNT_COL];
     private int move = 1;
@@ -17,11 +18,13 @@ public class Field extends JFrame{
     private RestartButton restart_button;
 
     public Field() {
-        super("Крестики-нолики");
+        super("Крестики-нолики(комбинация из " + WINNER_LEN + ")");
+        Dimension size = new Dimension(COLUMNS_SIZE + 120, COLUMNS_SIZE + 200);
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(COLUMNS_SIZE + 120, COLUMNS_SIZE + 200);
+        this.setSize(size);
         this.setLayout(null);
+        this.getContentPane().setBackground(Color.DARK_GRAY);
 
         //Добавление полей на экран
         for (int i = 0; i < COUNT_COL; i++)
@@ -35,16 +38,13 @@ public class Field extends JFrame{
         this.add(restart_button);
 
         //Кнопка выбора режима игры
-//        mode = new ModeButton();
-//        this.add(mode);
-
-        this.getContentPane().setBackground(
-                Color.darkGray
-        );
+        mode = new ModeButton();
+        this.add(mode);
 
         System.out.println("Начата новая партия");
     }
 
+    //Обработка клика по игровой ячейке
     public void action(int row, int col) {
         if (!winner.isEmpty())
             return;
@@ -61,9 +61,28 @@ public class Field extends JFrame{
         checkWin();
         if (!winner.isEmpty()) {
             System.out.println("Победили: " + winner);
+            return;
+        }
+//        computerAction();
+        if (mode.isSelected() && move % 2 == 0) {
+            computerAction();
         }
     }
 
+    public void computerAction() {
+        boolean fl = false;
+        while (!fl) {
+            Random random = new Random();
+            int i = random.nextInt(COUNT_COL - 1);
+            int j = random.nextInt(COUNT_COL - 1);
+            if (columns[i][j].isEmpty()) {
+                action(i, j);
+                fl = true;
+            }
+        }
+    }
+
+    //Проверка поля на победную комбинацию
     public void checkWin() {
         winner = "";
         Color colorWin = Color.green;
@@ -76,26 +95,26 @@ public class Field extends JFrame{
             for (int i = 0; i < COUNT_COL; i++)
                 checkLine(i, 0, 0, 1, COUNT_COL);
             //left diagonal top-half
-            int leftSize = 3;
-            for (int i = COUNT_COL - 3; i >= 0; i--) {
+            int leftSize = WINNER_LEN;
+            for (int i = COUNT_COL - WINNER_LEN; i >= 0; i--) {
                 checkLine(i, 0, 1, 1, leftSize);
                 leftSize++;
             }
             //left diagonal bot-half
-            leftSize = 3;
-            for (int i = COUNT_COL - 3; i > 0; i--) {
+            leftSize = WINNER_LEN;
+            for (int i = COUNT_COL - WINNER_LEN; i > 0; i--) {
                 checkLine( 0, i, 1, 1, leftSize);
                 leftSize++;
             }
             //right diagonal top-half
-            int rightSize = 3;
-            for (int i = 2; i < COUNT_COL; i++) {
+            int rightSize = WINNER_LEN;
+            for (int i = WINNER_LEN - 1; i < COUNT_COL; i++) {
                 checkLine(i, 0, -1, 1, rightSize);
                 rightSize++;
             }
             //right diagonal bot-half
             rightSize = 3;
-            for (int i = COUNT_COL - 3; i > 0; i--) {
+            for (int i = COUNT_COL - WINNER_LEN; i > 0; i--) {
                 checkLine(COUNT_COL - 1, i, -1, 1, rightSize);
                 rightSize++;
             }
@@ -124,7 +143,7 @@ public class Field extends JFrame{
                 linkedList.removeIf(Objects::nonNull);
                 linkedList.add(column);
             }
-            if (count == 3)
+            if (count == WINNER_LEN)
                 throw new GotWinnerException(
                         linkedList.getLast().getText(),
                         linkedList
@@ -134,8 +153,9 @@ public class Field extends JFrame{
         }
     }
 
+    //Рестарт игры
     public void restart() {
-        for (Column arr[] : columns)
+        for (Column[] arr : columns)
             for (Column cell : arr)
                 cell.clear();
         move = 1;

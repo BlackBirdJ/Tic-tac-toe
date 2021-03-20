@@ -26,7 +26,7 @@ public class Column extends JButton {
 
     public void clear() {
         this.setText("");
-        this.setBackground(Color.white);
+        this.setBackground(background);
     }
 
     public boolean isCross() {
