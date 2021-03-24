@@ -9,7 +9,7 @@ public class Field extends JFrame{
     public final static int COLUMNS_SIZE = COUNT_COL * Column.COL_SIZE;
     public final static String cross = "X";
     public final static String zero = "0";
-    public final static int WINNER_LEN = 5; // > 1 and <= COUNT_COL
+    public final static int WINNER_LEN = 6; // > 1 and (COUNT_COL - WINNER_LEN) == 1
 
     private Column[][] columns = new Column[COUNT_COL][COUNT_COL];
     private int move = 1;
@@ -66,19 +66,6 @@ public class Field extends JFrame{
 //        computerAction();
         if (mode.isSelected() && move % 2 == 0) {
             botAction();
-        }
-    }
-
-    public void computerAction() {
-        boolean fl = false;
-        while (!fl) {
-            Random random = new Random();
-            int i = random.nextInt(COUNT_COL - 1);
-            int j = random.nextInt(COUNT_COL - 1);
-            if (columns[i][j].isEmpty()) {
-                action(i, j);
-                fl = true;
-            }
         }
     }
 
@@ -243,7 +230,7 @@ public class Field extends JFrame{
         }
 
         //Попытка заблокировать победу врага
-        for (int j = WINNER_LEN - 1; j > 2; j--) {
+        for (int j = WINNER_LEN - 1; j > WINNER_LEN - 3; j--) {
             //scan left diagonal top-half
             leftSize = WINNER_LEN;
             for (int i = COUNT_COL - WINNER_LEN; i >= 0; i--) {
