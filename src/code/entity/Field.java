@@ -9,7 +9,7 @@ public class Field extends JFrame{
     public final static int COLUMNS_SIZE = COUNT_COL * Column.COL_SIZE;
     public final static String cross = "X";
     public final static String zero = "0";
-    public final static int WINNER_LEN = 6; // > 1 and (COUNT_COL - WINNER_LEN) == 1
+    public final static int WINNER_LEN = 5; // > 1 and (COUNT_COL - WINNER_LEN) == 1
 
     private Column[][] columns = new Column[COUNT_COL][COUNT_COL];
     private int move = 1;
@@ -194,21 +194,21 @@ public class Field extends JFrame{
         }
         //scan left diagonal top-half
         int leftSize = WINNER_LEN;
-        for (int i = COUNT_COL - WINNER_LEN; i >= 0; i--) {
-            column = scanLineOnStep(0, 0, 1, 1, leftSize, WINNER_LEN - 1, me, false);
+        for (int i = 0; i <= COUNT_COL - WINNER_LEN; i++) {
+            column = scanLineOnStep(i, 0, 1, 1, leftSize, WINNER_LEN - 1, me, false);
             if (column != null) {
                 return column;
             }
-            leftSize++;
+            leftSize--;
         }
         //scan left diagonal bot-half
         leftSize = WINNER_LEN;
-        for (int i = COUNT_COL - WINNER_LEN; i > 0; i--) {
+        for (int i = 0; i <= COUNT_COL - WINNER_LEN; i++) {
             column = scanLineOnStep(0, i, 1, 1, leftSize, WINNER_LEN - 1, me, false);
             if (column != null) {
                 return column;
             }
-            leftSize++;
+            leftSize--;
         }
         //right diagonal top-half
         int rightSize = WINNER_LEN;
@@ -230,24 +230,24 @@ public class Field extends JFrame{
         }
 
         //Попытка заблокировать победу врага
-        for (int j = WINNER_LEN - 1; j > WINNER_LEN - 3; j--) {
+        for (int j = WINNER_LEN - 1; j > WINNER_LEN - 4; j--) {
             //scan left diagonal top-half
             leftSize = WINNER_LEN;
-            for (int i = COUNT_COL - WINNER_LEN; i >= 0; i--) {
-                column = scanLineOnStep(0, 0, 1, 1, leftSize, j, enemy, false);
+            for (int i = 0; i <= COUNT_COL - WINNER_LEN; i++) {
+                column = scanLineOnStep(i, 0, 1, 1, leftSize, j, enemy, false);
                 if (column != null) {
                     return column;
                 }
-                leftSize++;
+                leftSize--;
             }
             //scan left diagonal bot-half
             leftSize = WINNER_LEN;
-            for (int i = COUNT_COL - WINNER_LEN; i > 0; i--) {
+            for (int i = 0; i <= COUNT_COL - WINNER_LEN; i++) {
                 column = scanLineOnStep(0, i, 1, 1, leftSize, j, enemy, false);
                 if (column != null) {
                     return column;
                 }
-                leftSize++;
+                leftSize--;
             }
             //right diagonal top-half
             rightSize = WINNER_LEN;
@@ -284,37 +284,37 @@ public class Field extends JFrame{
         }
 
         //Простой ход, если не удалось выиграть
-        for (int j = WINNER_LEN; j >= 1; j--) {
+        for (int j = WINNER_LEN - 1; j >= 1; j--) {
             for (int i = 0; i < COUNT_COL - 1; i++) {
-                column = scanLineOnStep(0, i, 1, 0, COUNT_COL - 1, j, me, false);
+                column = scanLineOnStep(0, i, 1, 0, COUNT_COL, j, me, false);
                 if (column != null) {
                     return column;
                 }
             }
             //scan columns
             for (int i = 0; i < COUNT_COL - 1; i++) {
-                column = scanLineOnStep(i, 0, 0, 1, COUNT_COL - 1, j, me, false);
+                column = scanLineOnStep(i, 0, 0, 1, COUNT_COL, j, me, false);
                 if (column != null) {
                     return column;
                 }
             }
             //scan left diagonal top-half
             leftSize = WINNER_LEN;
-            for (int i = COUNT_COL - WINNER_LEN; i >= 0; i--) {
-                column = scanLineOnStep(0, 0, 1, 1, leftSize, j, me, false);
+            for (int i = 0; i <= COUNT_COL - WINNER_LEN; i++) {
+                column = scanLineOnStep(i, 0, 1, 1, leftSize, j, me, false);
                 if (column != null) {
                     return column;
                 }
-                leftSize++;
+                leftSize--;
             }
             //scan left diagonal bot-half
             leftSize = WINNER_LEN;
-            for (int i = COUNT_COL - WINNER_LEN; i > 0; i--) {
+            for (int i = 0; i <= COUNT_COL - WINNER_LEN; i++) {
                 column = scanLineOnStep(0, i, 1, 1, leftSize, j, me, false);
                 if (column != null) {
                     return column;
                 }
-                leftSize++;
+                leftSize--;
             }
             //right diagonal top-half
             rightSize = WINNER_LEN;
