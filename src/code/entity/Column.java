@@ -40,4 +40,22 @@ public class Column extends JButton {
     public boolean isEmpty() {
         return getText().isEmpty();
     }
+
+    public boolean equals(Column column) {
+        return this.getText().equals(
+                column.getText()
+        );
+    }
+
+    public boolean equals(String text) {
+        return this.getText().equals(text);
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public int getCol() {
+        return col;
+    }
 }
