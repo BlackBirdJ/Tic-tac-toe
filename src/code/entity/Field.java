@@ -3,13 +3,14 @@ package code.entity;
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class Field extends JFrame{
-    public final static int COUNT_COL = 7;
+    public final static int COUNT_COL = 6;
+    public final static int WINNER_LEN = 5; // > 2 and (COUNT_COL - WINNER_LEN) == 2
     public final static int COLUMNS_SIZE = COUNT_COL * Column.COL_SIZE;
     public final static String cross = "X";
     public final static String zero = "0";
-    public final static int WINNER_LEN = 5; // > 1 and (COUNT_COL - WINNER_LEN) == 1
 
     private Column[][] columns = new Column[COUNT_COL][COUNT_COL];
     private int move = 1;
@@ -63,7 +64,6 @@ public class Field extends JFrame{
             System.out.println("Победили: " + winner);
             return;
         }
-//        computerAction();
         if (mode.isSelected() && move % 2 == 0) {
             botAction();
         }
@@ -167,8 +167,15 @@ public class Field extends JFrame{
      * enemy - враг, которого надо попытаться заблокировать (cross|zero)
      */
     public Column scanBotOnStep(String me, String enemy) {
-        //Если свободен центр на втором ходе
         if (move == 2) {
+//            Random random = new Random();
+//            while(true) {
+//                int i = random.nextInt(COUNT_COL);
+//                int j = random.nextInt(COUNT_COL);
+//                Column column = columns[i][j];
+//                if (column.isEmpty())
+//                    return column;
+//            }
             Column column = columns[COUNT_COL / 2][COUNT_COL / 2];
             if (column.isEmpty())
                 return column;
@@ -230,7 +237,7 @@ public class Field extends JFrame{
         }
 
         //Попытка заблокировать победу врага
-        for (int j = WINNER_LEN - 1; j > WINNER_LEN - 4; j--) {
+        for (int j = WINNER_LEN - 1; j > WINNER_LEN - 3; j--) {
             //scan left diagonal top-half
             leftSize = WINNER_LEN;
             for (int i = 0; i <= COUNT_COL - WINNER_LEN; i++) {
@@ -284,16 +291,10 @@ public class Field extends JFrame{
         }
 
         //Простой ход, если не удалось выиграть
-        for (int j = WINNER_LEN - 1; j >= 1; j--) {
+        for (int j = WINNER_LEN - 2; j >= 1; j--) {
+            //scan rows
             for (int i = 0; i < COUNT_COL - 1; i++) {
                 column = scanLineOnStep(0, i, 1, 0, COUNT_COL, j, me, false);
-                if (column != null) {
-                    return column;
-                }
-            }
-            //scan columns
-            for (int i = 0; i < COUNT_COL - 1; i++) {
-                column = scanLineOnStep(i, 0, 0, 1, COUNT_COL, j, me, false);
                 if (column != null) {
                     return column;
                 }
@@ -315,6 +316,13 @@ public class Field extends JFrame{
                     return column;
                 }
                 leftSize--;
+            }
+            //scan columns
+            for (int i = 0; i < COUNT_COL - 1; i++) {
+                column = scanLineOnStep(i, 0, 0, 1, COUNT_COL, j, me, false);
+                if (column != null) {
+                    return column;
+                }
             }
             //right diagonal top-half
             rightSize = WINNER_LEN;
