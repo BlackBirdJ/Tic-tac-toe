@@ -6,8 +6,8 @@ import java.util.*;
 import java.util.List;
 
 public class Field extends JFrame{
-    public final static int COUNT_COL = 6;
-    public final static int WINNER_LEN = 5; // > 2 and (COUNT_COL - WINNER_LEN) == 2
+    public final static int COUNT_COL = 7;
+    public final static int WINNER_LEN = 5;
     public final static int COLUMNS_SIZE = COUNT_COL * Column.COL_SIZE;
     public final static String cross = "X";
     public final static String zero = "0";
@@ -17,6 +17,7 @@ public class Field extends JFrame{
     private String winner = "";
     private ModeButton mode;
     private RestartButton restart_button;
+    private boolean reverseLine = true;
 
     public Field() {
         super("Крестики-нолики " + COUNT_COL + "x" + COUNT_COL + " (комбинация из " + WINNER_LEN + ")");
@@ -67,7 +68,7 @@ public class Field extends JFrame{
         if (mode.isSelected()
                 && move % 2 == 0
         ) {
-            botAction();
+            botAction(row, col);
         }
     }
 
@@ -152,12 +153,12 @@ public class Field extends JFrame{
         System.out.println("Начата новая партия");
     }
 
-    public void botAction() {
+    public void botAction(int row, int col) {
         Column column;
         if (move % 2 == 0)
-            column = scanBotOnStep(zero, cross);
+            column = scanBotOnStep(zero, cross, row, col);
         else
-            column = scanBotOnStep(cross, zero);
+            column = scanBotOnStep(cross, zero, row, col);
         if (column != null)
             action(column.getRow(), column.getCol());
     }
@@ -168,127 +169,105 @@ public class Field extends JFrame{
      * me - сторона за которую надо делать ход (cross|zero)
      * enemy - враг, которого надо попытаться заблокировать (cross|zero)
      */
-    public Column scanBotOnStep(String me, String enemy) {
+    public Column scanBotOnStep(String me, String enemy, int row, int col) {
         if (move == 2) {
-//            Random random = new Random();
-//            while(true) {
-//                int i = random.nextInt(COUNT_COL);
-//                int j = random.nextInt(COUNT_COL);
-//                Column column = columns[i][j];
-//                if (column.isEmpty())
-//                    return column;
-//            }
-            Column column = columns[COUNT_COL / 2][COUNT_COL / 2];
-            if (column.isEmpty())
-                return column;
-            column = columns[COUNT_COL / 2 - 1][COUNT_COL / 2 - 1];
-            if (column.isEmpty())
-                return column;
+            Random random = new Random();
+            while(true) {
+                int i = random.nextInt(COUNT_COL);
+                int j = random.nextInt(COUNT_COL);
+                Column column = columns[i][j];
+                if (column.isEmpty())
+                    return column;
+            }
+//            Column column = columns[COUNT_COL / 2][COUNT_COL / 2];
+//            if (column.isEmpty())
+//                return column;
+//            column = columns[COUNT_COL / 2 - 1][COUNT_COL / 2 - 1];
+//            if (column.isEmpty())
+//                return column;
         }
         Column column = null;
         //Попытка выиграть игру
         //scan rows
         for (int i = 0; i < COUNT_COL - 1; i++) {
-            column = scanLineOnStep(0, i, 1, 0, COUNT_COL - 1, WINNER_LEN - 1, me, false);
+            column = scanLineOnStep(0, i, 1, 0, WINNER_LEN - 1, me);
             if (column != null) {
                 return column;
             }
         }
         //scan columns
         for (int i = 0; i < COUNT_COL - 1; i++) {
-            column = scanLineOnStep(i, 0, 0, 1, COUNT_COL - 1, WINNER_LEN - 1, me, false);
+            column = scanLineOnStep(i, 0, 0, 1, WINNER_LEN - 1, me);
             if (column != null) {
                 return column;
             }
         }
         //scan left diagonal top-half
-        int leftSize = WINNER_LEN;
         for (int i = 0; i <= COUNT_COL - WINNER_LEN; i++) {
-            column = scanLineOnStep(i, 0, 1, 1, leftSize, WINNER_LEN - 1, me, false);
+            column = scanLineOnStep(i, 0, 1, 1, WINNER_LEN - 1, me);
             if (column != null) {
                 return column;
             }
-            leftSize--;
         }
         //scan left diagonal bot-half
-        leftSize = WINNER_LEN;
         for (int i = 0; i <= COUNT_COL - WINNER_LEN; i++) {
-            column = scanLineOnStep(0, i, 1, 1, leftSize, WINNER_LEN - 1, me, false);
+            column = scanLineOnStep(0, i, 1, 1, WINNER_LEN - 1, me);
             if (column != null) {
                 return column;
             }
-            leftSize--;
         }
         //right diagonal top-half
-        int rightSize = WINNER_LEN;
         for (int i = WINNER_LEN - 1; i < COUNT_COL; i++) {
-            column = scanLineOnStep(i, 0, -1, 1, rightSize, WINNER_LEN - 1, me, false);
+            column = scanLineOnStep(i, 0, -1, 1, WINNER_LEN - 1, me);
             if (column != null) {
                 return column;
             }
-            rightSize++;
         }
         //right diagonal bot-half
-        rightSize = WINNER_LEN;
         for (int i = COUNT_COL - WINNER_LEN; i > 0; i--) {
-            column = scanLineOnStep(COUNT_COL - 1, i, -1, 1, rightSize, WINNER_LEN - 1, me, false);
+            column = scanLineOnStep(COUNT_COL - 1, i, -1, 1, WINNER_LEN - 1, me);
             if (column != null) {
                 return column;
             }
-            rightSize++;
         }
 
         //Попытка заблокировать победу врага
-        for (int j = WINNER_LEN - 1; j > WINNER_LEN - 3; j--) {
-            //scan left diagonal top-half
-            leftSize = WINNER_LEN;
-            for (int i = 0; i <= COUNT_COL - WINNER_LEN; i++) {
-                column = scanLineOnStep(i, 0, 1, 1, leftSize, j, enemy, false);
-                if (column != null) {
-                    return column;
-                }
-                leftSize--;
-            }
-            //scan left diagonal bot-half
-            leftSize = WINNER_LEN;
-            for (int i = 0; i <= COUNT_COL - WINNER_LEN; i++) {
-                column = scanLineOnStep(0, i, 1, 1, leftSize, j, enemy, false);
-                if (column != null) {
-                    return column;
-                }
-                leftSize--;
-            }
-            //right diagonal top-half
-            rightSize = WINNER_LEN;
-            for (int i = WINNER_LEN - 1; i < COUNT_COL; i++) {
-                column = scanLineOnStep(i, 0, -1, 1, rightSize, j, enemy, false);
-                if (column != null) {
-                    return column;
-                }
-                rightSize++;
-            }
-            //right diagonal bot-half
-            rightSize = WINNER_LEN;
-            for (int i = COUNT_COL - WINNER_LEN; i > 0; i--) {
-                column = scanLineOnStep(COUNT_COL - 1, i, -1, 1, rightSize, j, enemy, false);
-                if (column != null) {
-                    return column;
-                }
-                rightSize++;
-            }
-            //scan rows
-            for (int i = 0; i < COUNT_COL; i++) {
-                column = scanLineOnStep(0, i, 1, 0, COUNT_COL, j, enemy, false);
-                if (column != null) {
-                    return column;
-                }
+        reverseLine = !reverseLine;
+        //Определяем начало левой диагонали
+        int leftYStart = row;
+        int leftXStart = col;
+        while (leftXStart != 0 && leftYStart != 0 ) {
+            leftXStart -= 1;
+            leftYStart -= 1;
+        }
+        //Определяем начало правой диагонали
+        int rightYStart = row;
+        int rightXStart = col;
+        while (rightXStart != COUNT_COL-1 && rightYStart != 0) {
+            rightXStart += 1;
+            rightYStart -= 1;
+        }
+        //Проверяем только те линии, которые содержат последний ход врага
+        for (int j = WINNER_LEN - 1; j >= WINNER_LEN - 2; j--) {
+            //scan row
+            column = scanLineOnStep(0, row, 1, 0, j, enemy);
+            if (column != null) {
+                return column;
             }
             //scan columns
-            for (int i = 0; i < COUNT_COL ; i++) {
-                column = scanLineOnStep(i, 0, 0, 1, COUNT_COL, j, enemy, false);
-                if (column != null) {
-                    return column;
-                }
+            column = scanLineOnStep(col, 0, 0, 1, j, enemy);
+            if (column != null) {
+                return column;
+            }
+            //scan left diagonals
+            column = scanLineOnStep(leftXStart, leftYStart, 1, 1, j, enemy);
+            if (column != null) {
+                return column;
+            }
+            //scan right diagonals
+            column = scanLineOnStep(rightXStart, rightYStart, -1, 1, j, enemy);
+            if (column != null) {
+                return column;
             }
         }
 
@@ -296,53 +275,45 @@ public class Field extends JFrame{
         for (int j = WINNER_LEN - 2; j >= 1; j--) {
             //scan rows
             for (int i = 0; i < COUNT_COL; i++) {
-                column = scanLineOnStep(0, i, 1, 0, COUNT_COL, j, me, false);
+                column = scanLineOnStep(0, i, 1, 0, j, me);
                 if (column != null) {
                     return column;
                 }
             }
             //scan left diagonal top-half
-            leftSize = WINNER_LEN;
             for (int i = 0; i <= COUNT_COL - WINNER_LEN; i++) {
-                column = scanLineOnStep(i, 0, 1, 1, leftSize, j, me, false);
+                column = scanLineOnStep(i, 0, 1, 1, j, me);
                 if (column != null) {
                     return column;
                 }
-                leftSize--;
             }
             //scan left diagonal bot-half
-            leftSize = WINNER_LEN;
             for (int i = 0; i <= COUNT_COL - WINNER_LEN; i++) {
-                column = scanLineOnStep(0, i, 1, 1, leftSize, j, me, false);
+                column = scanLineOnStep(0, i, 1, 1, j, me);
                 if (column != null) {
                     return column;
                 }
-                leftSize--;
             }
             //scan columns
             for (int i = 0; i < COUNT_COL; i++) {
-                column = scanLineOnStep(i, 0, 0, 1, COUNT_COL, j, me, false);
+                column = scanLineOnStep(i, 0, 0, 1, j, me);
                 if (column != null) {
                     return column;
                 }
             }
             //right diagonal top-half
-            rightSize = WINNER_LEN;
             for (int i = WINNER_LEN - 1; i < COUNT_COL; i++) {
-                column = scanLineOnStep(i, 0, -1, 1, rightSize, j, me, false);
+                column = scanLineOnStep(i, 0, -1, 1, j, me);
                 if (column != null) {
                     return column;
                 }
-                rightSize++;
             }
             //right diagonal bot-half
-            rightSize = WINNER_LEN;
             for (int i = COUNT_COL - WINNER_LEN; i > 0; i--) {
-                column = scanLineOnStep(COUNT_COL - 1, i, -1, 1, rightSize, j, me, false);
+                column = scanLineOnStep(COUNT_COL - 1, i, -1, 1, j, me);
                 if (column != null) {
                     return column;
                 }
-                rightSize++;
             }
         }
         return null;
@@ -354,24 +325,31 @@ public class Field extends JFrame{
      * yStart - координата начала линии по Y
      * xStep - шаг по оси X
      * yStep - шаг по оси Y
-     * sizeLine - размер линии(количество клеток в ней)
      * player - тип подсчитываемых последовательных ячеек(cross|zero)
-     * countEmpty - логическая переменная, отвечает за подсчет пустых ячеек(считать их или нет), нужна для выгодного хода, когдв не удалось заблокировать или выиграть
      */
-    public Column scanLineOnStep(int xStart, int yStart, int xStep, int yStep, int sizeLine, int count, String player, boolean countEmpty) {
+    public Column scanLineOnStep(int xStart, int yStart, int xStep, int yStep, int count, String player) {
+        int i = yStart;
+        int j= xStart;
+        LinkedList<Column> list = new LinkedList<>();
+        while (i < COUNT_COL && j < COUNT_COL && i >= 0 && j >= 0) {
+            list.add(columns[i][j]);
+            i += yStep;
+            j += xStep;
+        }
+
         int k = 0;
         Column result = null;
-        int i = yStart;
-        int j = xStart;
-
-        for (int c = 0; c < sizeLine; c++) {
-            Column column = columns[i][j];
+        for (int l = 0; l < list.size(); j++) {
+            Column column;
+            //Если нужно обратить строку
+            if (reverseLine)
+                column = list.getLast();
+            else
+                column = list.getFirst();
+            list.remove(column);
             //Если встретилась пустая ячейка, запоминаем ее
             if (column.isEmpty()) {
                 result = column;
-                //Если нужно их считать
-                if (countEmpty)
-                    k++;
             }
             else
                 //Если идет последовательность одинаковых непустых клеток, то считаем ее длину
@@ -380,6 +358,7 @@ public class Field extends JFrame{
                 }
                 //Если встретилась другая клетка, то обнуляем счет
                 else {
+                    result = null;
                     k = 0;
                 }
             //Если найдена оптимальная ячейка для хода, то возвращаем ее
