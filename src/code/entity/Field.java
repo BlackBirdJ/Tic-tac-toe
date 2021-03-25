@@ -64,7 +64,9 @@ public class Field extends JFrame{
             System.out.println("Победили: " + winner);
             return;
         }
-        if (mode.isSelected() && move % 2 == 0) {
+        if (mode.isSelected()
+                && move % 2 == 0
+        ) {
             botAction();
         }
     }
@@ -293,7 +295,7 @@ public class Field extends JFrame{
         //Простой ход, если не удалось выиграть
         for (int j = WINNER_LEN - 2; j >= 1; j--) {
             //scan rows
-            for (int i = 0; i < COUNT_COL - 1; i++) {
+            for (int i = 0; i < COUNT_COL; i++) {
                 column = scanLineOnStep(0, i, 1, 0, COUNT_COL, j, me, false);
                 if (column != null) {
                     return column;
@@ -318,7 +320,7 @@ public class Field extends JFrame{
                 leftSize--;
             }
             //scan columns
-            for (int i = 0; i < COUNT_COL - 1; i++) {
+            for (int i = 0; i < COUNT_COL; i++) {
                 column = scanLineOnStep(i, 0, 0, 1, COUNT_COL, j, me, false);
                 if (column != null) {
                     return column;
