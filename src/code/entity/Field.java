@@ -6,7 +6,7 @@ import java.util.*;
 import java.util.List;
 
 public class Field extends JFrame{
-    public final static int COUNT_COL = 7;
+    public final static int COUNT_COL = 10;
     public final static int WINNER_LEN = 5;
     public final static int COLUMNS_SIZE = COUNT_COL * Column.COL_SIZE;
     public final static String cross = "X";
@@ -79,34 +79,26 @@ public class Field extends JFrame{
         try {
             //rows
             for (int i = 0; i < COUNT_COL; i++) {
-                checkLine(0, i, 1, 0, COUNT_COL);
+                checkLine(0, i, 1, 0);
             }
             //col
             for (int i = 0; i < COUNT_COL; i++)
-                checkLine(i, 0, 0, 1, COUNT_COL);
+                checkLine(i, 0, 0, 1);
             //left diagonal top-half
-            int leftSize = WINNER_LEN;
             for (int i = COUNT_COL - WINNER_LEN; i >= 0; i--) {
-                checkLine(i, 0, 1, 1, leftSize);
-                leftSize++;
+                checkLine(i, 0, 1, 1);
             }
             //left diagonal bot-half
-            leftSize = WINNER_LEN;
             for (int i = COUNT_COL - WINNER_LEN; i > 0; i--) {
-                checkLine( 0, i, 1, 1, leftSize);
-                leftSize++;
+                checkLine( 0, i, 1, 1);
             }
             //right diagonal top-half
-            int rightSize = WINNER_LEN;
             for (int i = WINNER_LEN - 1; i < COUNT_COL; i++) {
-                checkLine(i, 0, -1, 1, rightSize);
-                rightSize++;
+                checkLine(i, 0, -1, 1);
             }
             //right diagonal bot-half
-            rightSize = WINNER_LEN;
             for (int i = COUNT_COL - WINNER_LEN; i > 0; i--) {
-                checkLine(COUNT_COL - 1, i, -1, 1, rightSize);
-                rightSize++;
+                checkLine(COUNT_COL - 1, i, -1, 1);
             }
         } catch (GotWinnerException e) {
             winner = e.getWinnerType();
@@ -115,13 +107,13 @@ public class Field extends JFrame{
         }
     }
     //Проверяет одну линию, на победную комбинацию
-    public void checkLine(int xStart, int yStart, int xStep, int yStep, int size) throws GotWinnerException {
+    public void checkLine(int xStart, int yStart, int xStep, int yStep) throws GotWinnerException {
         int count = 1;
         LinkedList<Column> linkedList = new LinkedList<>();
         linkedList.add(columns[yStart][xStart]);
         int i = yStart + yStep;
         int j = xStart + xStep;
-        for (int k = 1; k < size; k++) {
+        while (i < COUNT_COL && j < COUNT_COL && i >= 0 && j >= 0) {
             Column last = linkedList.getLast();
             Column column = columns[i][j];
             if (last.getText().equals(column.getText()) && !last.getText().isEmpty()) {
@@ -240,6 +232,7 @@ public class Field extends JFrame{
             leftXStart -= 1;
             leftYStart -= 1;
         }
+        System.out.println("left x:" + leftXStart + "\tleft y:" + leftYStart);
         //Определяем начало правой диагонали
         int rightYStart = row;
         int rightXStart = col;
@@ -247,6 +240,7 @@ public class Field extends JFrame{
             rightXStart += 1;
             rightYStart -= 1;
         }
+        System.out.println("right x:" + rightXStart + "\tright y:" + rightYStart);
         //Проверяем только те линии, которые содержат последний ход врага
         for (int j = WINNER_LEN - 1; j >= WINNER_LEN - 2; j--) {
             //scan row
@@ -273,13 +267,6 @@ public class Field extends JFrame{
 
         //Простой ход, если не удалось выиграть
         for (int j = WINNER_LEN - 2; j >= 1; j--) {
-            //scan rows
-            for (int i = 0; i < COUNT_COL; i++) {
-                column = scanLineOnStep(0, i, 1, 0, j, me);
-                if (column != null) {
-                    return column;
-                }
-            }
             //scan left diagonal top-half
             for (int i = 0; i <= COUNT_COL - WINNER_LEN; i++) {
                 column = scanLineOnStep(i, 0, 1, 1, j, me);
@@ -294,13 +281,6 @@ public class Field extends JFrame{
                     return column;
                 }
             }
-            //scan columns
-            for (int i = 0; i < COUNT_COL; i++) {
-                column = scanLineOnStep(i, 0, 0, 1, j, me);
-                if (column != null) {
-                    return column;
-                }
-            }
             //right diagonal top-half
             for (int i = WINNER_LEN - 1; i < COUNT_COL; i++) {
                 column = scanLineOnStep(i, 0, -1, 1, j, me);
@@ -311,6 +291,20 @@ public class Field extends JFrame{
             //right diagonal bot-half
             for (int i = COUNT_COL - WINNER_LEN; i > 0; i--) {
                 column = scanLineOnStep(COUNT_COL - 1, i, -1, 1, j, me);
+                if (column != null) {
+                    return column;
+                }
+            }
+            //scan rows
+            for (int i = 0; i < COUNT_COL; i++) {
+                column = scanLineOnStep(0, i, 1, 0, j, me);
+                if (column != null) {
+                    return column;
+                }
+            }
+            //scan columns
+            for (int i = 0; i < COUNT_COL; i++) {
+                column = scanLineOnStep(i, 0, 0, 1, j, me);
                 if (column != null) {
                     return column;
                 }
