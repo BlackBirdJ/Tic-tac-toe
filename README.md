@@ -6,4 +6,4 @@
 - Есть кнопка рестарта.  
 - Добавлен бот, который ставит клетки наугад.  
   
-![Иллюстрация](https://github.com/kreslojerry/resource/blob/main/tictactoe.png)
+![Иллюстрация](https://github.com/kreslojerry/resource/blob/main/TicTacToe/tictactoe.png)
