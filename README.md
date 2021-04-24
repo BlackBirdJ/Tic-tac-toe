@@ -6,4 +6,4 @@
 - Есть кнопка рестарта.  
 - Добавлен бот, который ставит клетки, препятствую игроку, или пытается выиграть.  
   
-<img src="https://github.com/kreslojerry/resource/blob/main/TicTacToe/tictactoe.png" width="450px"/>
+<img src="https://github.com/BlackBirdJ/resource/blob/main/TicTacToe/tictactoe.png" width="450px"/>
