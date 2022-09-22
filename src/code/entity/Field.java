@@ -61,12 +61,10 @@ public class Field extends JFrame{
         if (!winner.isEmpty())
             return;
         if (this.columns[row][col].isEmpty()) {
-            if (move % 2 != 0) {
+            if (move % 2 != 0)
                 this.columns[row][col].setText(cross);
-            }
-            else {
+            else
                 this.columns[row][col].setText(zero);
-            }
             System.out.println("Player: " + this.columns[row][col].getText() + "\trow: " + row + "\tcol: " + col);
             move++;
         }
@@ -75,11 +73,8 @@ public class Field extends JFrame{
             System.out.println("Победили: " + winner);
             return;
         }
-        if (mode.isSelected()
-                && move % 2 == 0
-        ) {
+        if (mode.isSelected() && move % 2 == 0)
             botAction(row, col);
-        }
     }
 
     //Проверка поля на победную комбинацию
@@ -91,7 +86,7 @@ public class Field extends JFrame{
             for (int i = 0; i < COUNT_COL; i++) {
                 checkLine(0, i, 1, 0);
             }
-            //col
+            //columns
             for (int i = 0; i < COUNT_COL; i++)
                 checkLine(i, 0, 0, 1);
             //left diagonals top-half
@@ -162,23 +157,17 @@ public class Field extends JFrame{
      * enemy - враг, которого надо попытаться заблокировать (cross|zero)
      */
     private Column scanBotOnStep(String me, String enemy, int row, int col) {
+        Column column;
         if (move == 2) {
             Random random = new Random();
             while(true) {
                 int i = random.nextInt(COUNT_COL);
                 int j = random.nextInt(COUNT_COL);
-                Column column = columns[i][j];
+                column = columns[i][j];
                 if (column.isEmpty())
                     return column;
             }
-//            Column column = columns[COUNT_COL / 2][COUNT_COL / 2];
-//            if (column.isEmpty())
-//                return column;
-//            column = columns[COUNT_COL / 2 - 1][COUNT_COL / 2 - 1];
-//            if (column.isEmpty())
-//                return column;
         }
-        Column column = null;
         //Попытка выиграть игру
         //scan rows
         for (int i = 0; i < COUNT_COL - 1; i++) {
@@ -232,7 +221,6 @@ public class Field extends JFrame{
             leftXStart -= 1;
             leftYStart -= 1;
         }
-        System.out.println("left x:" + leftXStart + "\tleft y:" + leftYStart);
         //Определяем начало правой диагонали
         int rightYStart = row;
         int rightXStart = col;
@@ -240,7 +228,6 @@ public class Field extends JFrame{
             rightXStart += 1;
             rightYStart -= 1;
         }
-        System.out.println("right x:" + rightXStart + "\tright y:" + rightYStart);
         //Проверяем только те линии, которые содержат последний ход врага
         for (int j = WINNER_LEN - 1; j >= WINNER_LEN - 2; j--) {
             //scan row
