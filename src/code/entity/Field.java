@@ -73,7 +73,7 @@ public class Field extends JFrame{
     }
 
     //Проверка поля на победную комбинацию
-    public void checkWin() {
+    private void checkWin() {
         winner = "";
         Color colorWin = Color.green;
         try {
@@ -107,7 +107,7 @@ public class Field extends JFrame{
         }
     }
     //Проверяет одну линию, на победную комбинацию
-    public void checkLine(int xStart, int yStart, int xStep, int yStep) throws GotWinnerException {
+    private void checkLine(int xStart, int yStart, int xStep, int yStep) throws GotWinnerException {
         int count = 1;
         LinkedList<Column> linkedList = new LinkedList<>();
         linkedList.add(columns[yStart][xStart]);
@@ -145,7 +145,7 @@ public class Field extends JFrame{
         System.out.println("Начата новая партия");
     }
 
-    public void botAction(int row, int col) {
+    private void botAction(int row, int col) {
         Column column;
         if (move % 2 == 0)
             column = scanBotOnStep(zero, cross, row, col);
@@ -161,7 +161,7 @@ public class Field extends JFrame{
      * me - сторона за которую надо делать ход (cross|zero)
      * enemy - враг, которого надо попытаться заблокировать (cross|zero)
      */
-    public Column scanBotOnStep(String me, String enemy, int row, int col) {
+    private Column scanBotOnStep(String me, String enemy, int row, int col) {
         if (move == 2) {
             Random random = new Random();
             while(true) {
@@ -321,7 +321,7 @@ public class Field extends JFrame{
      * yStep - шаг по оси Y
      * player - тип подсчитываемых последовательных ячеек(cross|zero)
      */
-    public Column scanLineOnStep(int xStart, int yStart, int xStep, int yStep, int count, String player) {
+    private Column scanLineOnStep(int xStart, int yStart, int xStep, int yStep, int count, String player) {
         int i = yStart;
         int j= xStart;
         LinkedList<Column> list = new LinkedList<>();
